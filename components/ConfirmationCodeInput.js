@@ -249,6 +249,10 @@ export default class ConfirmationCodeInput extends Component {
     let codeInputs = [];
     for (let i = 0; i < codeLength; i++) {
       const id = i;
+      var codeOutlineStyle = null
+      if (i < this.state.currentIndex){
+        codeOutlineStyle = {borderColor: 'white'}
+      }
       codeInputs.push(
         <TextInput
           key={id}
@@ -257,7 +261,8 @@ export default class ConfirmationCodeInput extends Component {
             styles.codeInput, 
             initialCodeInputStyle, 
             this._getClassStyle(className, this.state.currentIndex == id),
-            codeInputStyle
+            codeInputStyle,
+            codeOutlineStyle
           ]}
           underlineColorAndroid="transparent"
           selectionColor={activeColor}
