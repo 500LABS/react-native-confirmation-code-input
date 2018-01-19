@@ -267,7 +267,6 @@ export default class ConfirmationCodeInput extends Component {
           underlineColorAndroid="transparent"
           selectionColor={activeColor}
           keyboardType={'name-phone-pad'}
-          returnKeyType={'done'}
           {...this.props}
           autoFocus={autoFocus && id == 0}
           onFocus={() => this._onFocus(id)}
