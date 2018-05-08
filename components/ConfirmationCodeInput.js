@@ -45,6 +45,8 @@ export default class ConfirmationCodeInput extends Component {
       codeArr: new Array(this.props.codeLength).fill(''),
       currentIndex: 0
     };
+
+    this.delay = null;
     
     this.codeInputRefs = [];
   }
@@ -194,11 +196,16 @@ export default class ConfirmationCodeInput extends Component {
   }
   
   _onKeyPress(e) {
+    if(this.delay) return
+    this.delay = true
+    
     if (e.nativeEvent.key === 'Backspace') {
       const { currentIndex } = this.state;
       const nextIndex = currentIndex > 0 ? currentIndex - 1 : 0;
       this._setFocus(nextIndex);
     }
+
+    setTimeout(()=> this.delay = null)
   }
   
   _onInputCode(character, index) {
