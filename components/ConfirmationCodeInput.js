@@ -205,7 +205,7 @@ export default class ConfirmationCodeInput extends Component {
       this._setFocus(nextIndex);
     }
 
-    setTimeout(()=> this.delay = null)
+    setTimeout(()=> this.delay = null,10)
   }
   
   _onInputCode(character, index) {
