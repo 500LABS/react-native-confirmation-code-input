@@ -69,13 +69,26 @@ export default class ConfirmationCodeInput extends Component {
     });
     this._setFocus(0);
   }
+
+  _getInputRef(index) {
+    if (this.codeInputRefs) {
+      return this.codeInputRefs[index]
+    } 
+    return null
+  }
   
   _setFocus(index) {
-    this.codeInputRefs[index].focus();
+    let inputRef = _getInputRef(index)
+    if (inputRef) {
+      inputRef.focus();
+    }
   }
   
   _blur(index) {
-    this.codeInputRefs[index].blur();
+    let inputRef = _getInputRef(index)
+    if (inputRef) {
+      inputRef.blur();  
+    }
   }
   
   _onFocus(index) {
