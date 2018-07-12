@@ -78,14 +78,14 @@ export default class ConfirmationCodeInput extends Component {
   }
   
   _setFocus(index) {
-    let inputRef = _getInputRef(index)
+    let inputRef = this._getInputRef(index)
     if (inputRef) {
       inputRef.focus();
     }
   }
   
   _blur(index) {
-    let inputRef = _getInputRef(index)
+    let inputRef = this._getInputRef(index)
     if (inputRef) {
       inputRef.blur();  
     }
