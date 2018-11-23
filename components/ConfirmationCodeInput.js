@@ -218,7 +218,7 @@ export default class ConfirmationCodeInput extends Component {
       this._setFocus(nextIndex);
     }
 
-    setTimeout(()=> this.delay = null)
+    setTimeout(()=> this.delay = null, 10)
   }
 
   /** synthesizes the input characters based on the keyboard type removing invalid characters */
