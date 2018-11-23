@@ -45,9 +45,7 @@ export default class ConfirmationCodeInput extends Component {
       codeArr: new Array(this.props.codeLength).fill(''),
       currentIndex: 0
     };
-
     this.delay = null;
-    
     this.codeInputRefs = [];
   }
   
@@ -82,6 +80,7 @@ export default class ConfirmationCodeInput extends Component {
     if (inputRef) {
       inputRef.focus();
     }
+    this.codeInputRefs[index].focus();
   }
   
   _blur(index) {
@@ -89,6 +88,7 @@ export default class ConfirmationCodeInput extends Component {
     if (inputRef) {
       inputRef.blur();  
     }
+    this.codeInputRefs[index].blur();
   }
   
   _onFocus(index) {
@@ -211,26 +211,60 @@ export default class ConfirmationCodeInput extends Component {
   _onKeyPress(e) {
     if(this.delay) return
     this.delay = true
-    
+
     if (e.nativeEvent.key === 'Backspace') {
       const { currentIndex } = this.state;
       const nextIndex = currentIndex > 0 ? currentIndex - 1 : 0;
       this._setFocus(nextIndex);
     }
 
-    setTimeout(()=> this.delay = null,10)
+    setTimeout(()=> this.delay = null)
   }
-  
-  _onInputCode(character, index) {
-    const { codeLength, onFulfill, compareWithCode, ignoreCase } = this.props;
+
+  /** synthesizes the input characters based on the keyboard type removing invalid characters */
+  _synthesizeInput = characters => {
+    const { keyboardType } = this.props;
+    if (keyboardType === 'numeric') {
+      return characters.replace(/\D/g, '');
+    }
+    return characters;
+  };
+
+  _onInputCode(baseCharacters, baseIndex) {
+    const {
+      codeLength,
+      onFulfill,
+      compareWithCode,
+      ignoreCase,
+      keyboardType,
+    } = this.props;
+
+    const characters = this._synthesizeInput(baseCharacters).substring(
+      0,
+      codeLength - baseIndex
+    );
+
     let newCodeArr = _.clone(this.state.codeArr);
-    newCodeArr[index] = character;
-    
-    if (index == codeLength - 1) {
-      const code = newCodeArr.join('');
-      
+    for (
+      let i = baseIndex, j = 0;
+      i < codeLength && j < characters.length;
+      i++, j++
+    ) {
+      newCodeArr[i] = characters[j];
+    }
+
+    /** caret position */
+    let index = baseIndex + characters.length - 1;
+
+    /** constructed plain code */
+    const code = newCodeArr.join('');
+    if (index === codeLength - 1 && code.length === codeLength) {
       if (compareWithCode) {
-        const isMatching = this._isMatchingCode(code, compareWithCode, ignoreCase);
+        const isMatching = this._isMatchingCode(
+          code,
+          compareWithCode,
+          ignoreCase
+        );
         onFulfill(isMatching, code);
         !isMatching && this.clear();
       } else {
@@ -238,13 +272,13 @@ export default class ConfirmationCodeInput extends Component {
       }
       this._blur(this.state.currentIndex);
     } else {
-      this._setFocus(this.state.currentIndex + 1);
+      this._setFocus(index + 1);
     }
     
     this.setState(prevState => {
       return {
         codeArr: newCodeArr,
-        currentIndex: prevState.currentIndex + 1
+        currentIndex: index + 1,
       };
     });
   }
@@ -293,7 +327,6 @@ export default class ConfirmationCodeInput extends Component {
           value={this.state.codeArr[id] ? this.state.codeArr[id].toString() : ''}
           onChangeText={text => this._onInputCode(text, id)}
           onKeyPress={(e) => this._onKeyPress(e)}
-          maxLength={1}
         />
       )
     }
